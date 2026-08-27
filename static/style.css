@@ -18,7 +18,7 @@
 
 body {
   margin: 0;
-  padding: 24px 32px 120px;
+  padding: 24px 32px 150px;
   background: var(--bg);
   font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: #1f2430;
@@ -65,15 +65,35 @@ body {
 }
 
 .swatch {
-  width: 20px;
-  height: 12px;
-  border-radius: 6px;
-  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid;
+  font-size: 0.65rem;
+  line-height: 1;
 }
 
-.swatch.not_started { background: var(--not-started-bg); }
-.swatch.in_progress { background: var(--in-progress-bg); }
-.swatch.complete { background: var(--complete-bg); }
+.swatch.not_started {
+  background: transparent;
+  border-color: var(--not-started-text);
+}
+
+.swatch.in_progress {
+  background: linear-gradient(90deg, var(--in-progress-text) 50%, transparent 50%);
+  border-color: var(--in-progress-text);
+}
+
+.swatch.complete {
+  background: var(--complete-text);
+  border-color: var(--complete-text);
+}
+.swatch.complete::after {
+  content: "\2713";
+  color: #fff;
+}
 
 .domain-row {
   display: flex;
@@ -111,14 +131,17 @@ body {
 }
 
 .pill {
-  border: none;
+  border: 2px solid transparent;
   border-radius: 999px;
-  padding: 10px 16px;
+  padding: 9px 16px 9px 12px;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;
   transition: transform 0.08s ease, filter 0.1s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .pill:hover {
@@ -129,18 +152,54 @@ body {
   transform: scale(0.96);
 }
 
+.pill::before {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+/* Not Started: hollow/empty -- outline only, no fill. */
 .pill.not_started {
-  background: var(--not-started-bg);
+  background: #fff;
+  border-color: var(--not-started-text);
   color: var(--not-started-text);
 }
 
+.pill.not_started::before {
+  content: "\2715";
+  border: 2px solid var(--not-started-text);
+  color: var(--not-started-text);
+}
+
+/* In Progress: half-filled circle, distinct shape from both empty and full. */
 .pill.in_progress {
   background: var(--in-progress-bg);
+  border-color: var(--in-progress-text);
   color: var(--in-progress-text);
 }
 
+.pill.in_progress::before {
+  content: "";
+  border: 2px solid var(--in-progress-text);
+  background: linear-gradient(90deg, var(--in-progress-text) 50%, transparent 50%);
+}
+
+/* Complete: solid filled circle with a checkmark -- fully filled. */
 .pill.complete {
-  background: var(--complete-bg);
+  background: var(--complete-text);
+  border-color: var(--complete-text);
+  color: #fff;
+}
+
+.pill.complete::before {
+  content: "\2713";
+  background: #fff;
   color: var(--complete-text);
 }
 
@@ -151,15 +210,15 @@ body {
   right: 0;
   background: var(--card-bg);
   border-top: 1px solid #e5e7eb;
-  padding: 16px 32px;
+  padding: 24px 40px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 28px;
 }
 
 .progress-track {
   flex: 1;
-  height: 22px;
+  height: 42px;
   background: var(--track-bg);
   border-radius: 999px;
   overflow: hidden;
@@ -174,7 +233,7 @@ body {
 
 .progress-label {
   flex: 0 0 auto;
-  font-size: 1.1rem;
+  font-size: 1.7rem;
   font-weight: 700;
   color: var(--navy);
   white-space: nowrap;
