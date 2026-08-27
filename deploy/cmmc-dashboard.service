@@ -1,0 +1,14 @@
+[Unit]
+Description=CMMC Compliance Dashboard (Flask/waitress)
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/cmmc-raspi-app
+ExecStart=/home/pi/cmmc-raspi-app/venv/bin/waitress-serve --host=127.0.0.1 --port=5000 app:app
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
