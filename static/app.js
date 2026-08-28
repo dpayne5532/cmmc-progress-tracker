@@ -4,6 +4,24 @@ const NEXT_STATUS = {
   complete: "not_started",
 };
 
+// Shrinks pill/row sizing (via the --fit CSS variable) until the domain list
+// fits the available height without scrolling, whatever the screen size.
+function fitDomainsToScreen() {
+  const domains = document.querySelector(".domains");
+  if (!domains) return;
+  const root = document.documentElement;
+  const MIN_FIT = 0.55;
+  let fit = 1;
+  root.style.setProperty("--fit", fit);
+  while (domains.scrollHeight > domains.clientHeight + 1 && fit > MIN_FIT) {
+    fit = Math.max(MIN_FIT, fit - 0.05);
+    root.style.setProperty("--fit", fit);
+  }
+}
+
+window.addEventListener("load", fitDomainsToScreen);
+window.addEventListener("resize", fitDomainsToScreen);
+
 const progressFill = document.getElementById("progress-fill");
 const progressPercent = document.getElementById("progress-percent");
 

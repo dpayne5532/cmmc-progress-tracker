@@ -3,6 +3,7 @@
   --card-bg: #ffffff;
   --navy: #286291;
   --text-muted: #6b7280;
+  --fit: 1;
   --not-started-bg: #fbdcdc;
   --not-started-text: #a41f1f;
   --in-progress-bg: #fdf1c2;
@@ -132,7 +133,7 @@ body {
 .domain-row {
   display: flex;
   gap: 20px;
-  padding: 8px 0;
+  padding: calc(8px * var(--fit)) 0;
   border-top: 1px solid #eef0f3;
   align-items: flex-start;
 }
@@ -160,15 +161,15 @@ body {
 .pills {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: calc(10px * var(--fit));
   flex: 1;
 }
 
 .pill {
   border: 2px solid transparent;
   border-radius: 999px;
-  padding: 7px 14px 7px 10px;
-  font-size: 0.85rem;
+  padding: calc(7px * var(--fit)) calc(14px * var(--fit)) calc(7px * var(--fit)) calc(10px * var(--fit));
+  font-size: calc(0.85rem * var(--fit));
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;
@@ -190,10 +191,10 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: calc(16px * var(--fit));
+  height: calc(16px * var(--fit));
   border-radius: 50%;
-  font-size: 0.7rem;
+  font-size: calc(0.7rem * var(--fit));
   line-height: 1;
   flex: 0 0 auto;
 }
