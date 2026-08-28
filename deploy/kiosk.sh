@@ -26,5 +26,6 @@ exec "$CHROMIUM_BIN" \
   --disable-session-crashed-bubble \
   --disable-features=TranslateUI \
   --incognito \
+  --password-store=basic \
   --check-for-update-interval=31536000 \
   "$URL"
