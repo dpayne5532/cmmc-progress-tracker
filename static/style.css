@@ -1,7 +1,7 @@
 :root {
   --bg: #f4f5f7;
   --card-bg: #ffffff;
-  --navy: #1a2b6b;
+  --navy: #286291;
   --text-muted: #6b7280;
   --not-started-bg: #fbdcdc;
   --not-started-text: #a41f1f;
@@ -16,44 +16,72 @@
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+}
+
 body {
   margin: 0;
-  padding: 24px 32px 150px;
+  padding: 16px 28px;
   background: var(--bg);
   font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: #1f2430;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.page-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.brand-logo {
+  height: 26px;
+  width: auto;
+  display: block;
 }
 
 .page-header h1 {
-  margin: 0 0 20px;
-  font-size: 2rem;
+  margin: 0;
+  font-size: 1.4rem;
   color: var(--navy);
 }
 
 .page-header .subtitle {
   font-weight: 400;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   color: var(--text-muted);
 }
 
 .card {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   background: var(--card-bg);
   border-radius: 16px;
-  padding: 28px 32px;
+  padding: 18px 28px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
 }
 
 .section-title {
-  margin: 0 0 16px;
+  margin: 0 0 10px;
   color: var(--navy);
-  font-size: 1.3rem;
+  font-size: 1.1rem;
+  flex: 0 0 auto;
 }
 
 .legend {
   display: flex;
   gap: 24px;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
   flex-wrap: wrap;
+  flex: 0 0 auto;
 }
 
 .legend-item {
@@ -95,10 +123,16 @@ body {
   color: #fff;
 }
 
+.domains {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
 .domain-row {
   display: flex;
   gap: 20px;
-  padding: 14px 0;
+  padding: 8px 0;
   border-top: 1px solid #eef0f3;
   align-items: flex-start;
 }
@@ -133,8 +167,8 @@ body {
 .pill {
   border: 2px solid transparent;
   border-radius: 999px;
-  padding: 9px 16px 9px 12px;
-  font-size: 0.95rem;
+  padding: 7px 14px 7px 10px;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;
@@ -204,21 +238,19 @@ body {
 }
 
 .progress-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  flex: 0 0 auto;
   background: var(--card-bg);
   border-top: 1px solid #e5e7eb;
-  padding: 24px 40px;
+  padding: 14px 32px 0;
+  margin-top: 12px;
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 24px;
 }
 
 .progress-track {
   flex: 1;
-  height: 42px;
+  height: 30px;
   background: var(--track-bg);
   border-radius: 999px;
   overflow: hidden;
@@ -233,7 +265,7 @@ body {
 
 .progress-label {
   flex: 0 0 auto;
-  font-size: 1.7rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: var(--navy);
   white-space: nowrap;
