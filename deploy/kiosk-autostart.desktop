@@ -1,5 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=CMMC Dashboard Kiosk
-Exec=/home/pi/cmmc-raspi-app/deploy/kiosk.sh
-X-GNOME-Autostart-enabled=true

@@ -12,10 +12,6 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-echo "==> Installing unclutter (hides idle mouse cursor)"
-apt-get update
-apt-get install -y unclutter
-
 echo "==> Creating Python virtual environment"
 sudo -u "$TARGET_USER" python3 -m venv "$REPO_DIR/venv"
 sudo -u "$TARGET_USER" "$REPO_DIR/venv/bin/pip" install -r "$REPO_DIR/requirements.txt"
@@ -26,13 +22,15 @@ sed "s#/home/pi/cmmc-raspi-app#$REPO_DIR#g; s#User=pi#User=$TARGET_USER#g" \
 systemctl daemon-reload
 systemctl enable --now cmmc-dashboard
 
-echo "==> Installing kiosk autostart entry"
+echo "==> Registering kiosk launch in labwc autostart"
 chmod +x "$REPO_DIR/deploy/kiosk.sh"
-AUTOSTART_DIR="$USER_HOME/.config/autostart"
-sudo -u "$TARGET_USER" mkdir -p "$AUTOSTART_DIR"
-sed "s#/home/pi/cmmc-raspi-app#$REPO_DIR#g" \
-  "$REPO_DIR/deploy/kiosk-autostart.desktop" > "$AUTOSTART_DIR/kiosk-autostart.desktop"
-chown "$TARGET_USER":"$TARGET_USER" "$AUTOSTART_DIR/kiosk-autostart.desktop"
+LABWC_DIR="$USER_HOME/.config/labwc"
+AUTOSTART_FILE="$LABWC_DIR/autostart"
+sudo -u "$TARGET_USER" mkdir -p "$LABWC_DIR"
+sudo -u "$TARGET_USER" touch "$AUTOSTART_FILE"
+if ! grep -qF "$REPO_DIR/deploy/kiosk.sh" "$AUTOSTART_FILE"; then
+  echo "$REPO_DIR/deploy/kiosk.sh &" | sudo -u "$TARGET_USER" tee -a "$AUTOSTART_FILE" > /dev/null
+fi
 
 echo "==> Done."
 echo "Make sure desktop auto-login is enabled: sudo raspi-config -> System Options -> Boot / Auto Login -> Desktop Autologin"

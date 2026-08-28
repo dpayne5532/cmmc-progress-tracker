@@ -29,26 +29,28 @@ bottom progress bar update.
 
 ## Deploying to the Raspberry Pi
 
-Target: Raspberry Pi OS (Bookworm or similar) with the desktop environment, on a
-Pi 3B connected to a monitor/TV.
+Target: Raspberry Pi OS (Bookworm/Trixie, desktop image running **labwc**, the
+default Wayland compositor) on a Pi 3B connected to a monitor/TV.
 
 1. Copy this repo onto the Pi (e.g. `git clone` or `scp -r`), typically to
-   `/home/pi/cmmc-raspi-app`.
+   `/home/pi/cmmc-raspi-app` (or `/home/<user>/cmmc-raspi-app`).
 2. Enable desktop auto-login so the kiosk comes up with no manual login after
    power-on:
    ```bash
    sudo raspi-config
    # System Options -> Boot / Auto Login -> Desktop Autologin
    ```
+   While you're in `raspi-config`, also check Display Options for a "Screen
+   Blanking" toggle and disable it, so the display doesn't sleep.
 3. Run the installer from the repo root:
    ```bash
    cd cmmc-raspi-app
    sudo ./deploy/install.sh
    ```
-   This creates a Python venv, installs dependencies, installs `unclutter`,
-   registers `cmmc-dashboard` as a systemd service (auto-starts the Flask app on
-   boot), and adds an autostart entry that launches Chromium in kiosk mode
-   pointed at the dashboard once you log into the desktop.
+   This creates a Python venv, installs dependencies, registers
+   `cmmc-dashboard` as a systemd service (auto-starts the Flask app on boot),
+   and adds a line to `~/.config/labwc/autostart` that launches Chromium in
+   kiosk mode pointed at the dashboard once the desktop session starts.
 4. Reboot: `sudo reboot`. The Pi should boot straight to the desktop, launch the
    dashboard service, and open Chromium fullscreen on it.
 
@@ -82,7 +84,10 @@ Not Started.
 
 - Everything is local — no internet dependency once installed, no external
   services or accounts.
-- If your Pi image uses a different desktop session (Wayfire/labwc vs LXDE), the
-  `~/.config/autostart/*.desktop` mechanism still applies on stock Raspberry Pi OS.
-- `chromium-browser` is the command name on Raspberry Pi OS; if yours uses a
-  different binary name, adjust `deploy/kiosk.sh` accordingly.
+- The mouse cursor is left visible on purpose — this dashboard is meant to be
+  clicked (to cycle status), unlike a passive display.
+- `deploy/kiosk.sh` looks for `chromium` first, falling back to
+  `chromium-browser`, so it works whichever binary name your image ships.
+- If your Pi image uses X11 instead of labwc/Wayland (older Raspberry Pi OS,
+  or LXDE), autostart via `~/.config/labwc/autostart` won't apply — use a
+  `~/.config/autostart/*.desktop` entry pointing at `deploy/kiosk.sh` instead.
