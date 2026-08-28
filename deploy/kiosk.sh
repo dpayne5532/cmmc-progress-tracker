@@ -7,8 +7,10 @@ set -euo pipefail
 
 URL="http://localhost:5000"
 
-# Wait for the Flask/waitress service to start responding.
-for i in $(seq 1 30); do
+# Wait for the Flask/waitress service to start responding. On a Pi 3B, a cold
+# boot can have the desktop session racing the systemd service for slow SD
+# card I/O, so give this a generous window rather than opening to a dead page.
+for i in $(seq 1 120); do
   if curl -sf "$URL" > /dev/null 2>&1; then
     break
   fi
