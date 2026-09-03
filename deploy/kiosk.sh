@@ -39,5 +39,6 @@ exec "$CHROMIUM_BIN" \
   --check-for-update-interval=31536000 \
   --disable-background-networking \
   --ozone-platform=wayland \
-  --disable-gpu \
+  --use-gl=swiftshader \
+  --disable-gpu-compositing \
   "$URL"
