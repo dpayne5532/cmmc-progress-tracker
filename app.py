@@ -26,7 +26,16 @@ def load_state():
         return state
 
     with open(STATE_PATH) as f:
-        state = json.load(f)
+        try:
+            state = json.load(f)
+        except json.JSONDecodeError:
+            # Corrupt state file should never take the whole kiosk down. Preserve
+            # the bad file for inspection and start fresh instead of 500ing forever.
+            corrupt_path = STATE_PATH.with_suffix(".corrupt.json")
+            STATE_PATH.replace(corrupt_path)
+            state = {pid: "not_started" for pid in ALL_PRACTICE_IDS}
+            save_state(state)
+            return state
 
     # Heal state file if practice list has changed since it was created.
     changed = False
