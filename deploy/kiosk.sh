@@ -37,5 +37,7 @@ exec "$CHROMIUM_BIN" \
   --incognito \
   --password-store=basic \
   --check-for-update-interval=31536000 \
+  --disable-background-networking \
   --ozone-platform=wayland \
+  --disable-gpu \
   "$URL"
