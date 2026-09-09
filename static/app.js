@@ -66,9 +66,14 @@ function randomColor() {
   return CONFETTI_COLORS[(Math.random() * CONFETTI_COLORS.length) | 0];
 }
 
+// Hard ceiling on simultaneous particles -- the Pi 3B renders this canvas
+// fully in software (no GPU compositing), so keeping the per-frame shape
+// count bounded matters more here than it would on normal hardware.
+const MAX_PARTICLES = 140;
+
 function spawnConfetti(count) {
   const w = celebrationCanvas.width;
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < count && celebrationParticles.length < MAX_PARTICLES; i++) {
     celebrationParticles.push({
       kind: "confetti",
       x: Math.random() * w,
@@ -85,8 +90,8 @@ function spawnConfetti(count) {
 }
 
 function spawnFirework(x, y) {
-  const count = 30;
-  for (let i = 0; i < count; i++) {
+  const count = 20;
+  for (let i = 0; i < count && celebrationParticles.length < MAX_PARTICLES; i++) {
     const angle = (Math.PI * 2 * i) / count;
     const speed = 2 + Math.random() * 3;
     celebrationParticles.push({
@@ -129,8 +134,6 @@ function stepCelebration() {
     ctx.save();
     ctx.globalAlpha = Math.max(p.life, 0);
     ctx.fillStyle = p.color;
-    ctx.shadowColor = p.color;
-    ctx.shadowBlur = p.kind === "confetti" ? 6 : 12;
     if (p.kind === "confetti") {
       ctx.translate(p.x, p.y);
       ctx.rotate(p.rotation);
@@ -162,10 +165,9 @@ function playCelebrationAnimation(practiceId) {
   celebrationParticles = [];
   const w = celebrationCanvas.width;
   const h = celebrationCanvas.height;
-  spawnConfetti(70);
+  spawnConfetti(45);
   spawnFirework(w * 0.25, h * 0.35);
-  setTimeout(() => spawnFirework(w * 0.75, h * 0.3), 250);
-  setTimeout(() => spawnFirework(w * 0.5, h * 0.45), 500);
+  setTimeout(() => spawnFirework(w * 0.75, h * 0.3), 350);
 
   if (celebrationAnimationId === null) {
     celebrationAnimationId = requestAnimationFrame(stepCelebration);
@@ -175,7 +177,7 @@ function playCelebrationAnimation(practiceId) {
   // plays, instead of a single burst that fizzles out early and leaves the
   // badge sitting there in silence for the rest of the clip.
   const durationMs = getCelebrationDurationMs();
-  const spawnWaveMs = 900;
+  const spawnWaveMs = 1600;
   const stopSpawningAt = Math.max(durationMs - 1000, spawnWaveMs);
 
   clearInterval(celebrationSpawnInterval);
@@ -185,7 +187,7 @@ function playCelebrationAnimation(practiceId) {
       clearInterval(celebrationSpawnInterval);
       return;
     }
-    spawnConfetti(25);
+    spawnConfetti(15);
     spawnFirework(w * (0.2 + Math.random() * 0.6), h * (0.25 + Math.random() * 0.25));
     elapsed += spawnWaveMs;
   }, spawnWaveMs);
