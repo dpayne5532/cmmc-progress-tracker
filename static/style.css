@@ -294,3 +294,91 @@ body {
   color: #ffffff;
   white-space: nowrap;
 }
+
+.celebration-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(19, 53, 102, 0.55);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.celebration-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.celebration-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.celebration-badge {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  background: #fff;
+  border-radius: 40px;
+  padding: 80px 120px;
+  max-width: 90vw;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transform: scale(0.4);
+}
+
+.celebration-badge.pop {
+  animation: celebration-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.celebration-check {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--complete-text);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+}
+
+.celebration-id {
+  font-size: 7.5rem;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.celebration-label {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--complete-text);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+@keyframes celebration-pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

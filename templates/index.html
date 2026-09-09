@@ -50,6 +50,15 @@
     </div>
   </main>
 
+  <div class="celebration-overlay" id="celebration-overlay">
+    <canvas class="celebration-canvas" id="celebration-canvas"></canvas>
+    <div class="celebration-badge" id="celebration-badge">
+      <div class="celebration-check">&#10003;</div>
+      <div class="celebration-id" id="celebration-id"></div>
+      <div class="celebration-label">Complete!</div>
+    </div>
+  </div>
+
   <audio id="celebrate-sound" src="{{ url_for('static', filename='audio/Celebrate.mp3') }}" preload="auto"></audio>
   <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
