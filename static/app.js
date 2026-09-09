@@ -24,6 +24,12 @@ window.addEventListener("resize", fitDomainsToScreen);
 
 const progressFill = document.getElementById("progress-fill");
 const progressPercent = document.getElementById("progress-percent");
+const celebrateSound = document.getElementById("celebrate-sound");
+
+function playCelebration() {
+  celebrateSound.currentTime = 0;
+  celebrateSound.play().catch((err) => console.error("Failed to play celebration sound:", err));
+}
 
 function applyStatus(pill, status) {
   pill.classList.remove("not_started", "in_progress", "complete");
@@ -44,6 +50,7 @@ document.querySelectorAll(".pill").forEach((pill) => {
     const optimisticNext = NEXT_STATUS[current];
 
     applyStatus(pill, optimisticNext);
+    if (optimisticNext === "complete") playCelebration();
 
     try {
       const res = await fetch(`/api/practice/${encodeURIComponent(id)}/cycle`, {
