@@ -25,8 +25,36 @@ window.addEventListener("resize", fitDomainsToScreen);
 const progressFill = document.getElementById("progress-fill");
 const progressPercent = document.getElementById("progress-percent");
 const celebrateSound = document.getElementById("celebrate-sound");
+celebrateSound.volume = 1;
+
+// <audio>.volume tops out at 100% of the source recording, which isn't loud
+// enough for a kiosk speaker. Route it through the Web Audio API instead so
+// we can push the gain well past that ceiling, with a compressor limiting
+// the boosted signal so it gets louder without turning into a clipped mess.
+const CELEBRATION_GAIN = 6;
+let celebrationAudioGraph = null;
+
+function getCelebrationAudioGraph() {
+  if (!celebrationAudioGraph) {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaElementSource(celebrateSound);
+    const gain = audioCtx.createGain();
+    gain.gain.value = CELEBRATION_GAIN;
+    const compressor = audioCtx.createDynamicsCompressor();
+    compressor.threshold.value = -24;
+    compressor.knee.value = 30;
+    compressor.ratio.value = 12;
+    compressor.attack.value = 0.003;
+    compressor.release.value = 0.25;
+    source.connect(gain).connect(compressor).connect(audioCtx.destination);
+    celebrationAudioGraph = audioCtx;
+  }
+  return celebrationAudioGraph;
+}
 
 function playCelebration() {
+  const audioCtx = getCelebrationAudioGraph();
+  if (audioCtx.state === "suspended") audioCtx.resume();
   celebrateSound.currentTime = 0;
   celebrateSound.play().catch((err) => console.error("Failed to play celebration sound:", err));
 }
