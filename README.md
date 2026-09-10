@@ -1,6 +1,6 @@
 # CMMC Compliance Dashboard
 
-A single-purpose kiosk display for a Raspberry Pi 3B showing CMMC Level 2 (NIST SP
+A single-purpose kiosk display for a Raspberry Pi 400 showing CMMC Level 2 (NIST SP
 800-171) compliance progress: all 110 practices across 14 domains, each shown as a
 clickable pill you cycle through **Not Started → In Progress → Complete**, plus a
 live percentage-complete bar at the bottom.
@@ -30,7 +30,7 @@ bottom progress bar update.
 ## Deploying to the Raspberry Pi
 
 Target: Raspberry Pi OS (Bookworm/Trixie, desktop image running **labwc**, the
-default Wayland compositor) on a Pi 3B connected to a monitor/TV.
+default Wayland compositor) on a Pi 400 connected to a monitor/TV.
 
 1. Copy this repo onto the Pi (e.g. `git clone` or `scp -r`), typically to
    `/home/pi/cmmc-raspi-app` (or `/home/<user>/cmmc-raspi-app`).

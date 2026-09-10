@@ -3,6 +3,10 @@
 # Targets labwc (Wayland, default on Raspberry Pi OS Bookworm/Trixie) -- no xset/unclutter,
 # those are X11-only. Screen blanking is disabled via raspi-config instead (see README),
 # and the mouse cursor is hidden with CSS in the page itself.
+#
+# Runs with GPU acceleration on (Pi 400's VideoCore VI handles the celebration
+# canvas fine) -- unlike the Pi 3B this was originally tuned for, which needed
+# --disable-gpu-compositing/--use-gl=swiftshader to avoid tearing.
 set -euo pipefail
 
 URL="http://localhost:5000"
@@ -12,10 +16,10 @@ mkdir -p "$(dirname "$LOG_FILE")"
 exec >> "$LOG_FILE" 2>&1
 echo "[$(date -Iseconds)] kiosk.sh starting"
 
-# Wait for the Flask/waitress service to start responding. On a Pi 3B, a cold
-# boot can have the desktop session racing the systemd service for slow SD
-# card I/O, so keep retrying rather than giving up and opening a dead page --
-# a blank Chromium window never recovers on its own since nothing reloads it.
+# Wait for the Flask/waitress service to start responding. A cold boot can
+# have the desktop session racing the systemd service for slow SD card I/O,
+# so keep retrying rather than giving up and opening a dead page -- a blank
+# Chromium window never recovers on its own since nothing reloads it.
 attempt=0
 until curl -sf "$URL" > /dev/null 2>&1; do
   attempt=$((attempt + 1))
@@ -39,6 +43,4 @@ exec "$CHROMIUM_BIN" \
   --check-for-update-interval=31536000 \
   --disable-background-networking \
   --ozone-platform=wayland \
-  --use-gl=swiftshader \
-  --disable-gpu-compositing \
   "$URL"

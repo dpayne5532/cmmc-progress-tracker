@@ -9,10 +9,11 @@ from domains import ALL_PRACTICE_IDS, DOMAINS, TOTAL_PRACTICES
 BASE_DIR = Path(__file__).resolve().parent
 STATE_PATH = BASE_DIR / "data" / "state.json"
 
-STATUSES = ("not_started", "in_progress", "complete")
+STATUSES = ("not_started", "in_progress", "needs_approval", "complete")
 NEXT_STATUS = {
     "not_started": "in_progress",
-    "in_progress": "complete",
+    "in_progress": "needs_approval",
+    "needs_approval": "complete",
     "complete": "not_started",
 }
 

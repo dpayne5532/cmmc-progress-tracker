@@ -1,8 +1,10 @@
 const NEXT_STATUS = {
   not_started: "in_progress",
-  in_progress: "complete",
+  in_progress: "needs_approval",
+  needs_approval: "complete",
   complete: "not_started",
 };
+const ALL_STATUSES = ["not_started", "in_progress", "needs_approval", "complete"];
 
 // Shrinks pill/row sizing (via the --fit CSS variable) until the domain list
 // fits the available height without scrolling, whatever the screen size.
@@ -32,9 +34,9 @@ function playCelebration() {
   celebrateSound.play().catch((err) => console.error("Failed to play celebration sound:", err));
 }
 
-// Confetti + fireworks burst, kept deliberately light (small particle counts,
-// short duration) since this runs on a Pi 3B with GPU compositing disabled --
-// canvas 2D drawing is the cheapest way to get this effect on that hardware.
+// Confetti + fireworks burst. Runs on a Pi 400 with hardware-accelerated
+// Chromium (see deploy/kiosk.sh), so the canvas can carry a lot more
+// particles than the Pi 3B this was originally tuned for.
 const celebrationOverlay = document.getElementById("celebration-overlay");
 const celebrationCanvas = document.getElementById("celebration-canvas");
 const celebrationBadge = document.getElementById("celebration-badge");
@@ -66,10 +68,9 @@ function randomColor() {
   return CONFETTI_COLORS[(Math.random() * CONFETTI_COLORS.length) | 0];
 }
 
-// Hard ceiling on simultaneous particles -- the Pi 3B renders this canvas
-// fully in software (no GPU compositing), so keeping the per-frame shape
-// count bounded matters more here than it would on normal hardware.
-const MAX_PARTICLES = 140;
+// Hard ceiling on simultaneous particles -- generous now that the Pi 400's
+// GPU-accelerated Chromium can carry a much busier canvas than the 3B could.
+const MAX_PARTICLES = 500;
 
 function spawnConfetti(count) {
   const w = celebrationCanvas.width;
@@ -90,20 +91,20 @@ function spawnConfetti(count) {
 }
 
 function spawnFirework(x, y) {
-  const count = 20;
+  const count = 45;
   for (let i = 0; i < count && celebrationParticles.length < MAX_PARTICLES; i++) {
     const angle = (Math.PI * 2 * i) / count;
-    const speed = 2 + Math.random() * 3;
+    const speed = 2.5 + Math.random() * 4.5;
     celebrationParticles.push({
       kind: "firework",
       x,
       y,
       vx: Math.cos(angle) * speed,
       vy: Math.sin(angle) * speed,
-      size: 3 + Math.random() * 2,
+      size: 3 + Math.random() * 2.5,
       color: randomColor(),
       life: 1,
-      decay: 0.012 + Math.random() * 0.01,
+      decay: 0.01 + Math.random() * 0.008,
     });
   }
 }
@@ -165,9 +166,10 @@ function playCelebrationAnimation(practiceId) {
   celebrationParticles = [];
   const w = celebrationCanvas.width;
   const h = celebrationCanvas.height;
-  spawnConfetti(45);
+  spawnConfetti(140);
   spawnFirework(w * 0.25, h * 0.35);
-  setTimeout(() => spawnFirework(w * 0.75, h * 0.3), 350);
+  setTimeout(() => spawnFirework(w * 0.75, h * 0.3), 200);
+  setTimeout(() => spawnFirework(w * 0.5, h * 0.2), 400);
 
   if (celebrationAnimationId === null) {
     celebrationAnimationId = requestAnimationFrame(stepCelebration);
@@ -177,8 +179,8 @@ function playCelebrationAnimation(practiceId) {
   // plays, instead of a single burst that fizzles out early and leaves the
   // badge sitting there in silence for the rest of the clip.
   const durationMs = getCelebrationDurationMs();
-  const spawnWaveMs = 1600;
-  const stopSpawningAt = Math.max(durationMs - 1000, spawnWaveMs);
+  const spawnWaveMs = 700;
+  const stopSpawningAt = Math.max(durationMs - 600, spawnWaveMs);
 
   clearInterval(celebrationSpawnInterval);
   let elapsed = spawnWaveMs;
@@ -187,8 +189,8 @@ function playCelebrationAnimation(practiceId) {
       clearInterval(celebrationSpawnInterval);
       return;
     }
-    spawnConfetti(15);
-    spawnFirework(w * (0.2 + Math.random() * 0.6), h * (0.25 + Math.random() * 0.25));
+    spawnConfetti(35);
+    spawnFirework(w * (0.15 + Math.random() * 0.7), h * (0.2 + Math.random() * 0.3));
     elapsed += spawnWaveMs;
   }, spawnWaveMs);
 
@@ -200,7 +202,7 @@ function playCelebrationAnimation(practiceId) {
 }
 
 function applyStatus(pill, status) {
-  pill.classList.remove("not_started", "in_progress", "complete");
+  pill.classList.remove(...ALL_STATUSES);
   pill.classList.add(status);
 }
 
@@ -212,9 +214,7 @@ function applyPercent(percent) {
 document.querySelectorAll(".pill").forEach((pill) => {
   pill.addEventListener("click", async () => {
     const id = pill.dataset.id;
-    const current = ["not_started", "in_progress", "complete"].find((s) =>
-      pill.classList.contains(s)
-    );
+    const current = ALL_STATUSES.find((s) => pill.classList.contains(s));
     const optimisticNext = NEXT_STATUS[current];
 
     applyStatus(pill, optimisticNext);

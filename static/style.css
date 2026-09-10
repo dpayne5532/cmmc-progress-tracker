@@ -11,6 +11,8 @@
   --not-started-text: #a41f1f;
   --in-progress-bg: #fdf1c2;
   --in-progress-text: #8a6d00;
+  --needs-approval-bg: #ede9fe;
+  --needs-approval-text: #6d28d9;
   --complete-bg: #d4f2df;
   --complete-text: #16713f;
   --track-bg: #e2e4e9;
@@ -141,6 +143,11 @@ body {
   border-color: var(--in-progress-text);
 }
 
+.swatch.needs_approval {
+  background: conic-gradient(var(--needs-approval-text) 270deg, transparent 270deg);
+  border-color: var(--needs-approval-text);
+}
+
 .swatch.complete {
   background: var(--complete-text);
   border-color: var(--complete-text);
@@ -249,6 +256,20 @@ body {
   content: "";
   border: 2px solid var(--in-progress-text);
   background: linear-gradient(90deg, var(--in-progress-text) 50%, transparent 50%);
+}
+
+/* Needs Approval: three-quarter-filled circle -- fuller than In Progress,
+   short of the solid circle Complete uses. */
+.pill.needs_approval {
+  background: var(--needs-approval-bg);
+  border-color: var(--needs-approval-text);
+  color: var(--needs-approval-text);
+}
+
+.pill.needs_approval::before {
+  content: "";
+  border: 2px solid var(--needs-approval-text);
+  background: conic-gradient(var(--needs-approval-text) 270deg, transparent 270deg);
 }
 
 /* Complete: solid filled circle with a checkmark -- fully filled. */
