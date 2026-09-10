@@ -211,9 +211,17 @@ function applyPercent(percent) {
   progressPercent.textContent = percent;
 }
 
+// Practice IDs with a cycle request in flight. Blocking re-clicks on a pill
+// until its request resolves avoids a race where an earlier click's response
+// arrives after a later click's optimistic update and overwrites it.
+const pendingPractices = new Set();
+
 document.querySelectorAll(".pill").forEach((pill) => {
   pill.addEventListener("click", async () => {
     const id = pill.dataset.id;
+    if (pendingPractices.has(id)) return;
+    pendingPractices.add(id);
+
     const current = ALL_STATUSES.find((s) => pill.classList.contains(s));
     const optimisticNext = NEXT_STATUS[current];
 
@@ -235,6 +243,8 @@ document.querySelectorAll(".pill").forEach((pill) => {
       // Revert optimistic update if the request failed.
       applyStatus(pill, current);
       console.error("Failed to update practice status:", err);
+    } finally {
+      pendingPractices.delete(id);
     }
   });
 });

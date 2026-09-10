@@ -16,6 +16,12 @@ NEXT_STATUS = {
     "needs_approval": "complete",
     "complete": "not_started",
 }
+STATUS_WEIGHTS = {
+    "not_started": 0,
+    "in_progress": 0.10,
+    "needs_approval": 0.25,
+    "complete": 1,
+}
 
 app = Flask(__name__)
 
@@ -59,8 +65,8 @@ def save_state(state):
 
 
 def percent_complete(state):
-    complete = sum(1 for status in state.values() if status == "complete")
-    return round(complete / TOTAL_PRACTICES * 100)
+    earned = sum(STATUS_WEIGHTS[status] for status in state.values())
+    return round(earned / TOTAL_PRACTICES * 100)
 
 
 @app.route("/")
